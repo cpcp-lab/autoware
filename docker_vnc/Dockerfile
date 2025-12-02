@@ -1,8 +1,10 @@
-ARG AUTOWARE_BASE_IMAGE
-ARG AUTOWARE_BASE_CUDA_IMAGE
+ARG AUTOWARE_DEVEL_IMAGE=ghcr.io/autowarefoundation/autoware:universe-devel-20251126
+ARG AUTOWARE_DEVEL_CUDA_IMAGE=ghcr.io/autowarefoundation/autoware:universe-devel-cuda-20251126
 
 # hadolint ignore=DL3006
-FROM ghcr.io/autowarefoundation/autoware:universe AS universe-vnc
+FROM $AUTOWARE_DEVEL_IMAGE AS universe-devel-vnc
+
+ENV DEBIAN_FRONTEND=noninteractive    
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
@@ -19,7 +21,10 @@ ENTRYPOINT ["/ros_entrypoint_vnc.sh"]
 CMD ["/bin/bash"]
 
 # hadolint ignore=DL3006
-FROM ghcr.io/autowarefoundation/autoware:universe-devel AS universe-devel-vnc
+#FROM ghcr.io/autowarefoundation/autoware:universe-devel AS universe-devel-vnc
+FROM $AUTOWARE_DEVEL_CUDA_IMAGE AS universe-devel-cuda-vnc
+
+ENV DEBIAN_FRONTEND=noninteractive    
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \

@@ -3,6 +3,9 @@
 
 set -e
 
+# Additional image extension
+IMAGE_EXT=-20251126
+
 # Define terminal colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -179,6 +182,8 @@ main() {
     set_variables
     set_gpu_flag
     set_x_display
+
+    IMAGE=${IMAGE}${IMAGE_EXT}
 
     if [ "$option_devel" = "true" ]; then
         echo -e "${GREEN}-----------------------------------------------------------------${NC}"

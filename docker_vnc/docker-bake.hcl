@@ -1,7 +1,7 @@
 group "default" {
   targets = [
     "universe-devel-vnc",
-    "universe-vnc"
+    "universe-devel-cuda-vnc"
   ]
 }
 
@@ -21,7 +21,7 @@ group "default" {
 #target "docker-metadata-action-universe-visualization-devel" {}
 #target "docker-metadata-action-universe-visualization" {}
 target "docker-metadata-action-universe-devel" {}
-target "docker-metadata-action-universe" {}
+target "docker-metadata-action-universe-devel-cuda" {}
 
 #target "core-common-devel" {
 #  inherits = ["docker-metadata-action-core-common-devel"]
@@ -119,14 +119,14 @@ target "docker-metadata-action-universe" {}
 #  target = "universe"
 #}
 
-target "universe-vnc" {
-  inherits = ["docker-metadata-action-universe"]
-  dockerfile = "docker_vnc/Dockerfile"
-  target = "universe-vnc"
-}
-
 target "universe-devel-vnc" {
   inherits = ["docker-metadata-action-universe-devel"]
   dockerfile = "docker_vnc/Dockerfile"
   target = "universe-devel-vnc"
+}
+
+target "universe-devel-cuda-vnc" {
+  inherits = ["docker-metadata-action-universe-devel-cuda"]
+  dockerfile = "docker_vnc/Dockerfile"
+  target = "universe-devel-cuda-vnc"
 }
