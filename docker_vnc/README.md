@@ -2,9 +2,9 @@
 
 ## Tested Environment
 
-- OS: macOS 13.7.6
-- Docker: version 27.4.0
-- [`autowarefoundation/autoware`](https://github.com/autowarefoundation/autoware): `cd1bb25`
+- OS: macOS 15.7 and Debian 13.2
+- Docker: versions 27.4.0 and 29.0.2
+- Autoware Docker image: `20251126`
 
 ## Usage
 
@@ -24,18 +24,17 @@
      -h              Display this help message
      --cuda          Enable CUDA support
      --platform      Specify the platform (default: current platform)
-     --devel-only    Build devel image only
    
    Note: The --platform option should be one of 'linux/amd64' or 'linux/arm64'
    ```
-2. Build of a development image:
+2. Build of a image supporting CUDA:
    ```shell
-   $ ./docker_vnc/build_vnc.sh --devel-only
+   $ ./docker_vnc/build_vnc.sh --cuda
    ...
    ```
 3. Container invocation example:
    ```shell
-   $ docker run -it --rm -p 5901:5901 -e LOCAL_UID=501 -e LOCAL_GID=20 -e LOCAL_USER=a_user -e LOCAL_GROUP=a_group -v ./map:/autoware_map:ro -v ./data:/autoware_data:rw -v .:/workspace:rw ghcr.io/autowarefoundation/autoware:universe-devel-vnc /bin/bash
+   $ docker run -it --rm -p 5901:5901 -e LOCAL_UID=501 -e LOCAL_GID=20 -e LOCAL_USER=a_user -e LOCAL_GROUP=a_group -v ./map:/autoware_map:ro -v ./data:/autoware_data:rw -v .:/workspace:rw ghcr.io/autowarefoundation/autoware:universe-devel-cuda-vnc /bin/bash
    ...
    a_user@[CID]:/autoware$ vncserver :1 -geometry 1920x1200 -depth 24 -localhost no
    ...
