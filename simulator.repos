@@ -1,5 +1,5 @@
 repositories:
   simulator/scenario_simulator:
     type: git
-    url: https://github.com/tier4/scenario_simulator_v2.git
-    version: 18.2.1
+    url: https://github.com/cpcp-lab/scenario_simulator_v2.git
+    version: 2526a91a2cf776a96d116b500dfeca462a09c0e7
