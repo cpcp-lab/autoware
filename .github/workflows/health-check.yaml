@@ -11,6 +11,10 @@ on:
     - cron: 0 12 * * *
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   label-check:
     uses: autowarefoundation/autoware-github-actions/.github/workflows/make-sure-label-is-present.yaml@v1
@@ -46,6 +50,11 @@ jobs:
             lib-dir: aarch64
     runs-on: ${{ fromJson(matrix.runner) }}
     steps:
+      # https://github.com/actions/checkout/issues/211
+      - name: Change permission of workspace
+        run: |
+          sudo chown -R $USER:$USER ${{ github.workspace }}
+
       - name: Check out repository
         uses: actions/checkout@v4
 
@@ -60,7 +69,7 @@ jobs:
         with:
           files: |
             *.env
-            *.repos
+            repositories/*.repos
             .github/actions/docker-build/action.yaml
             .github/workflows/health-check.yaml
             ansible-galaxy-requirements.yaml
@@ -86,7 +95,7 @@ jobs:
         with:
           platform: ${{ matrix.platform }}
           cache-tag-suffix: ${{ matrix.build-type }}
-          additional-repos: ${{ matrix.build-type == 'nightly' && 'autoware-nightly.repos' || '' }}
+          additional-repos: ${{ matrix.build-type == 'nightly' && 'repositories/autoware-nightly.repos' || '' }}
           build-args: |
             ROS_DISTRO=${{ needs.load-env.outputs.rosdistro }}
             AUTOWARE_BASE_IMAGE=${{ needs.load-env.outputs.autoware_base_image }}

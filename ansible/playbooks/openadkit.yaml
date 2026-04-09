@@ -14,7 +14,6 @@
           - rosdistro: "{{ rosdistro }}"
           - rmw_implementation: "{{ rmw_implementation }}"
           - cuda_version: "{{ cuda_version }}"
-          - cudnn_version: "{{ cudnn_version }}"
           - tensorrt_version: "{{ tensorrt_version }}"
   roles:
     # Autoware base dependencies
@@ -27,10 +26,10 @@
       when: module == 'base'
     - role: autoware.dev_env.kisak_mesa
       when: module == 'base' and rosdistro != 'jazzy'
-    - role: autoware.dev_env.pacmod
-      when: module == 'base' and rosdistro != 'jazzy'
     - role: autoware.dev_env.build_tools
       when: module == 'all' and install_devel=='y'
+    - role: autoware.dev_env.rust
+      when: module == 'all'
 
     # Module specific dependencies
     - role: autoware.dev_env.geographiclib

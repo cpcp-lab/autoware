@@ -15,11 +15,15 @@ inputs:
     default: 2
     description: Maximum parallelism for buildkitd.
     required: false
+  suffix:
+    description: Suffix for image tags (e.g., -jazzy).
+    required: false
+    default: ""
 
 runs:
   using: composite
   steps:
-    - name: Install jq and vcstool
+    - name: Install jq and vcs2l
       run: |
         sudo apt-get -y update
         sudo apt-get -y install curl gnupg lsb-release
@@ -30,14 +34,13 @@ runs:
           sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
         sudo apt-get update
-        sudo apt-get install -y jq python3-pip python3-vcstool
+        sudo apt-get install -y jq python3-pip python3-vcs2l
       shell: bash
 
     - name: Run vcs import
       run: |
-        mkdir src
-        vcs import --shallow src < autoware.repos
-        vcs import src < extra-packages.repos
+        mkdir -p src
+        vcs import --recursive --shallow src < repositories/autoware.repos
       shell: bash
 
     - name: Setup Docker Buildx
@@ -91,9 +94,9 @@ runs:
       with:
         images: ghcr.io/${{ github.repository_owner }}/${{ inputs.target-image }}
         tags: |
-          type=raw,value=universe-common-devel-cuda-${{ inputs.platform }}
-          type=raw,value=universe-common-devel-cuda-${{ steps.date.outputs.date }}-${{ inputs.platform }}
-          type=ref,event=tag,prefix=universe-common-devel-cuda-,suffix=-${{ inputs.platform }}
+          type=raw,value=universe-common-devel-cuda${{ inputs.suffix }}-${{ inputs.platform }}
+          type=raw,value=universe-common-devel-cuda-${{ steps.date.outputs.date }}${{ inputs.suffix }}-${{ inputs.platform }}
+          type=ref,event=tag,prefix=universe-common-devel-cuda-,suffix=${{ inputs.suffix }}-${{ inputs.platform }}
         bake-target: docker-metadata-action-universe-common-devel-cuda
         flavor: |
           latest=false
@@ -104,9 +107,9 @@ runs:
       with:
         images: ghcr.io/${{ github.repository_owner }}/${{ inputs.target-image }}
         tags: |
-          type=raw,value=universe-sensing-perception-devel-cuda-${{ inputs.platform }}
-          type=raw,value=universe-sensing-perception-devel-cuda-${{ steps.date.outputs.date }}-${{ inputs.platform }}
-          type=ref,event=tag,prefix=universe-sensing-perception-devel-cuda-,suffix=-${{ inputs.platform }}
+          type=raw,value=universe-sensing-perception-devel-cuda${{ inputs.suffix }}-${{ inputs.platform }}
+          type=raw,value=universe-sensing-perception-devel-cuda-${{ steps.date.outputs.date }}${{ inputs.suffix }}-${{ inputs.platform }}
+          type=ref,event=tag,prefix=universe-sensing-perception-devel-cuda-,suffix=${{ inputs.suffix }}-${{ inputs.platform }}
         bake-target: docker-metadata-action-universe-sensing-perception-devel-cuda
         flavor: |
           latest=false
@@ -117,9 +120,9 @@ runs:
       with:
         images: ghcr.io/${{ github.repository_owner }}/${{ inputs.target-image }}
         tags: |
-          type=raw,value=universe-sensing-perception-cuda-${{ inputs.platform }}
-          type=raw,value=universe-sensing-perception-cuda-${{ steps.date.outputs.date }}-${{ inputs.platform }}
-          type=ref,event=tag,prefix=universe-sensing-perception-cuda-,suffix=-${{ inputs.platform }}
+          type=raw,value=universe-sensing-perception-cuda${{ inputs.suffix }}-${{ inputs.platform }}
+          type=raw,value=universe-sensing-perception-cuda-${{ steps.date.outputs.date }}${{ inputs.suffix }}-${{ inputs.platform }}
+          type=ref,event=tag,prefix=universe-sensing-perception-cuda-,suffix=${{ inputs.suffix }}-${{ inputs.platform }}
         bake-target: docker-metadata-action-universe-sensing-perception-cuda
         flavor: |
           latest=false
@@ -130,9 +133,9 @@ runs:
       with:
         images: ghcr.io/${{ github.repository_owner }}/${{ inputs.target-image }}
         tags: |
-          type=raw,value=universe-devel-cuda-${{ inputs.platform }}
-          type=raw,value=universe-devel-cuda-${{ steps.date.outputs.date }}-${{ inputs.platform }}
-          type=ref,event=tag,prefix=universe-devel-cuda-,suffix=-${{ inputs.platform }}
+          type=raw,value=universe-devel-cuda${{ inputs.suffix }}-${{ inputs.platform }}
+          type=raw,value=universe-devel-cuda-${{ steps.date.outputs.date }}${{ inputs.suffix }}-${{ inputs.platform }}
+          type=ref,event=tag,prefix=universe-devel-cuda-,suffix=${{ inputs.suffix }}-${{ inputs.platform }}
         bake-target: docker-metadata-action-universe-devel-cuda
         flavor: |
           latest=false
@@ -143,9 +146,9 @@ runs:
       with:
         images: ghcr.io/${{ github.repository_owner }}/${{ inputs.target-image }}
         tags: |
-          type=raw,value=universe-cuda-${{ inputs.platform }}
-          type=raw,value=universe-cuda-${{ steps.date.outputs.date }}-${{ inputs.platform }}
-          type=ref,event=tag,prefix=universe-cuda-,suffix=-${{ inputs.platform }}
+          type=raw,value=universe-cuda${{ inputs.suffix }}-${{ inputs.platform }}
+          type=raw,value=universe-cuda-${{ steps.date.outputs.date }}${{ inputs.suffix }}-${{ inputs.platform }}
+          type=ref,event=tag,prefix=universe-cuda-,suffix=${{ inputs.suffix }}-${{ inputs.platform }}
         bake-target: docker-metadata-action-universe-cuda
         flavor: |
           latest=false
