@@ -1,5 +1,5 @@
-ARG AUTOWARE_DEVEL_IMAGE=ghcr.io/autowarefoundation/autoware:universe-devel-20251126
-ARG AUTOWARE_DEVEL_CUDA_IMAGE=ghcr.io/autowarefoundation/autoware:universe-devel-cuda-20251126
+ARG AUTOWARE_DEVEL_IMAGE=ghcr.io/autowarefoundation/autoware:universe-devel-1.7.1
+ARG AUTOWARE_DEVEL_CUDA_IMAGE=ghcr.io/autowarefoundation/autoware:universe-devel-cuda-1.7.1
 
 # hadolint ignore=DL3006
 FROM $AUTOWARE_DEVEL_IMAGE AS universe-devel-vnc
