@@ -20,12 +20,21 @@ function configure_vnc () {
     cat << EOF > $HOME/.vnc/xstartup
 #!/bin/sh
 unset DBUS_SESSION_BUS_ADDRESS
-gsettings set org.mate.screensaver mode "blank-only"
-gsettings set org.mate.screensaver lock-enabled false
-mate-session
+exec dbus-launch --exit-with-session startxfce4
 EOF
     chmod 755 $HOME/.vnc/xstartup
-    
+
+    mkdir -p $HOME/.config/xfce4/xfconf/xfce-perchannel-xml
+    cat << EOF > $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xsettings" version="1.0">
+  <property name="Net" type="empty">
+    <property name="ThemeName" type="string" value="Adwaita"/>
+    <property name="IconThemeName" type="string" value="Tango"/>
+  </property>
+</channel>
+EOF
+
     mkdir -p $HOME/Desktop
     cat << EOF > $HOME/Desktop/Terminal.desktop
 #!/usr/bin/env xdg-open
@@ -35,9 +44,10 @@ Type=Application
 Terminal=false
 Name=Terminal
 Name[C]=Terminal
-Exec=mate-terminal
-Icon=/usr/share/icons/mate/48x48/apps/terminal.png
+Exec=xfce4-terminal
+Icon=utilities-terminal
 EOF
+    chmod +x $HOME/Desktop/Terminal.desktop
 }
 
 # Check if any of the variables are empty
