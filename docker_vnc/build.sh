@@ -2,24 +2,24 @@
 
 set -e
 
+SCRIPT_DIR=$(readlink -f "$(dirname "$0")")
+ORG_SCRIPT_DIR=$SCRIPT_DIR/../docker
+WORKSPACE_ROOT="$ORG_SCRIPT_DIR/.."
+
+# Default values
+option_no_cuda=false
+option_platform=""
+
 # Function to print help message
 print_help() {
-    echo "Usage: build_vnc.sh [OPTIONS]"
+    echo "Usage: build.sh [OPTIONS]"
     echo "Options:"
-    echo "  --help          Display this help message"
-    echo "  -h              Display this help message"
-    echo "  --cuda          Enable CUDA support"
+    echo "  --help/-h       Display this help message"
+    echo "  --no-cuda       Disable CUDA support (default: enabled)"
     echo "  --platform      Specify the platform (default: current platform)"
-    #echo "  --devel-only    Build devel image only"
     echo ""
     echo "Note: The --platform option should be one of 'linux/amd64' or 'linux/arm64'."
 }
-
-SCRIPT_DIR=$(readlink -f "$(dirname "$0")")
-
-# Modify this!
-ORG_SCRIPT_DIR=$SCRIPT_DIR/../docker
-WORKSPACE_ROOT="$ORG_SCRIPT_DIR/.."
 
 # Parse arguments
 parse_arguments() {
@@ -27,18 +27,15 @@ parse_arguments() {
         case "$1" in
         --help | -h)
             print_help
-            exit 1
+            exit 0
             ;;
-        --cuda)
-            option_no_cuda=false
+        --no-cuda)
+            option_no_cuda=true
             ;;
         --platform)
             option_platform="$2"
             shift
             ;;
-        #--devel-only)
-        #    option_devel_only=true
-        #    ;;
         *)
             echo "Unknown option: $1"
             print_help
@@ -51,22 +48,11 @@ parse_arguments() {
 
 # Set CUDA options
 set_cuda_options() {
-    if [ "$option_no_cuda" = "false" ]; then
-        image_name_suffix="-cuda"
-    else
-        setup_args="--no-nvidia"
+    if [ "$option_no_cuda" = "true" ]; then
         image_name_suffix=""
+    else
+        image_name_suffix="-cuda"
     fi
-}
-
-# Set build options
-set_build_options() {
-    #if [ "$option_devel_only" = "true" ]; then
-    #    target="universe-devel-vnc"
-    #else
-    #    target="universe-vnc"
-    #fi
-    target="universe-devel"
 }
 
 # Set platform
@@ -74,9 +60,9 @@ set_platform() {
     if [ -n "$option_platform" ]; then
         platform="$option_platform"
     else
-        platform="linux/arm64"
-        if [ "$(uname -m)" = "x86_64" ]; then
-            platform="linux/amd64"
+        platform="linux/amd64"
+        if [ "$(uname -m)" = "aarch64" ]; then
+            platform="linux/arm64"
         fi
     fi
 }
@@ -106,18 +92,18 @@ build_images() {
     # https://github.com/docker/buildx/issues/484
     export BUILDKIT_STEP_LOG_MAX_SIZE=10000000
 
-    image_name_suffix=${image_name_suffix}-vnc
+    target="universe-devel${image_name_suffix}-vnc"
 
     echo "Building images for platform: $platform"
     echo "ROS distro: $rosdistro"
     echo "Base image: $base_image"
-    echo "Setup args: $setup_args"
     echo "Lib dir: $lib_dir"
-    echo "Image name suffix: $image_name_suffix"
     echo "Target: $target"
 
     set -x
-    docker buildx bake --load --progress=plain -f "$ORG_SCRIPT_DIR/docker-bake.hcl" -f "$ORG_SCRIPT_DIR/docker-bake-cuda.hcl" \
+    docker buildx bake --load --progress=plain \
+        -f "$ORG_SCRIPT_DIR/docker-bake.hcl" \
+        -f "$ORG_SCRIPT_DIR/docker-bake-cuda.hcl" \
         -f "$SCRIPT_DIR/docker-bake.hcl" \
         --set "*.context=$WORKSPACE_ROOT" \
         --set "*.ssh=default" \
@@ -125,11 +111,10 @@ build_images() {
         --set "*.args.ROS_DISTRO=$rosdistro" \
         --set "*.args.AUTOWARE_BASE_IMAGE=$autoware_base_image" \
         --set "*.args.AUTOWARE_BASE_CUDA_IMAGE=$autoware_base_cuda_image" \
-        --set "*.args.SETUP_ARGS=$setup_args" \
         --set "*.args.LIB_DIR=$lib_dir" \
         --set "universe-devel-vnc.tags=ghcr.io/autowarefoundation/autoware:universe-devel-vnc" \
         --set "universe-devel-cuda-vnc.tags=ghcr.io/autowarefoundation/autoware:universe-devel-cuda-vnc" \
-        "$target$image_name_suffix"
+        "$target"
     set +x
 }
 
@@ -141,7 +126,6 @@ remove_dangling_images() {
 # Main script execution
 parse_arguments "$@"
 set_cuda_options
-set_build_options
 set_platform
 set_arch_lib_dir
 load_env
