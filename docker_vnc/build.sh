@@ -60,9 +60,9 @@ set_platform() {
     if [ -n "$option_platform" ]; then
         platform="$option_platform"
     else
-        platform="linux/amd64"
-        if [ "$(uname -m)" = "aarch64" ]; then
-            platform="linux/arm64"
+        platform="linux/arm64"
+        if [ "$(uname -m)" = "x86_64" ]; then
+            platform="linux/amd64"
         fi
     fi
 }
