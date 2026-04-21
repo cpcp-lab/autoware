@@ -13,6 +13,7 @@ NC='\033[0m' # No Color
 option_no_nvidia=false
 option_x11=false
 option_pull_latest_image=false
+option_image=""
 MAP_PATH=""
 DATA_PATH=""
 WORKSPACE_PATH=""
@@ -32,6 +33,7 @@ print_help() {
     echo -e "  ${GREEN}--map-path${NC}           Mount map files into /autoware_map"
     echo -e "  ${GREEN}--data-path${NC}          Mount data files into /autoware_data"
     echo -e "  ${GREEN}--no-nvidia${NC}          Disable NVIDIA GPU support"
+    echo -e "  ${GREEN}--image${NC}              Docker image to use (overrides built-in image names)"
     echo -e "  ${GREEN}--pull-latest-image${NC}  Pull the latest image before starting"
     echo -e "------------------------------------------------------------"
 }
@@ -57,6 +59,10 @@ parse_arguments() {
             ;;
         --no-nvidia)
             option_no_nvidia=true
+            ;;
+        --image)
+            option_image="$2"
+            shift
             ;;
         --pull-latest-image)
             option_pull_latest_image=true
@@ -110,6 +116,9 @@ set_gpu_flag() {
     else
         GPU_FLAG="--gpus all"
         IMAGE="ghcr.io/autowarefoundation/autoware:universe-devel-cuda-vnc"
+    fi
+    if [ -n "$option_image" ]; then
+        IMAGE="$option_image"
     fi
 }
 
