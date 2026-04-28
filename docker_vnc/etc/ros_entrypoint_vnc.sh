@@ -69,9 +69,7 @@ else
 
     HOME=/home/"$USER_NAME"
     configure_vnc
-    chown "$USER_ID":"$GROUP_ID" $HOME/.vnc
-    chown "$USER_ID":"$GROUP_ID" $HOME/.vnc/passwd
-    chown "$USER_ID":"$GROUP_ID" $HOME/.vnc/xstartup
+    chown -R "$USER_ID":"$GROUP_ID" "$HOME"
 
     # Source ROS 2
     # hadolint ignore=SC1090

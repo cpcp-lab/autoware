@@ -2,6 +2,11 @@
 
 set -e
 
+# Define terminal colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
 SCRIPT_DIR=$(readlink -f "$(dirname "$0")")
 ORG_SCRIPT_DIR=$SCRIPT_DIR/../docker
 WORKSPACE_ROOT="$ORG_SCRIPT_DIR/.."
@@ -12,13 +17,13 @@ option_platform=""
 
 # Function to print help message
 print_help() {
-    echo "Usage: build.sh [OPTIONS]"
-    echo "Options:"
-    echo "  --help/-h       Display this help message"
-    echo "  --no-cuda       Disable CUDA support (default: enabled)"
-    echo "  --platform      Specify the platform (default: current platform)"
+    echo -e "${RED}Usage:${NC} build.sh [OPTIONS]"
+    echo -e "Options:"
+    echo -e "  ${GREEN}--help/-h${NC}       Display this help message"
+    echo -e "  ${GREEN}--no-cuda${NC}       Disable CUDA support (default: enabled)"
+    echo -e "  ${GREEN}--platform${NC}      Specify the platform (default: current platform)"
     echo ""
-    echo "Note: The --platform option should be one of 'linux/amd64' or 'linux/arm64'."
+    echo -e "Note: The ${GREEN}--platform${NC} option should be one of 'linux/amd64' or 'linux/arm64'."
 }
 
 # Parse arguments

@@ -22,7 +22,6 @@ VNC_DISPLAY=1
 
 # Function to print help message
 print_help() {
-    echo -e "\n------------------------------------------------------------"
     echo -e "${RED}Usage:${NC} run.sh [OPTIONS]"
     echo -e "Options:"
     echo -e "  ${GREEN}--help/-h${NC}            Display this help message"
@@ -35,7 +34,6 @@ print_help() {
     echo -e "  ${GREEN}--no-nvidia${NC}          Disable NVIDIA GPU support"
     echo -e "  ${GREEN}--image${NC}              Docker image to use (overrides built-in image names)"
     echo -e "  ${GREEN}--pull-latest-image${NC}  Pull the latest image before starting"
-    echo -e "------------------------------------------------------------"
 }
 
 # Parse arguments
