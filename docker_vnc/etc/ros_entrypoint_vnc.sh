@@ -50,12 +50,18 @@ EOF
     chmod +x $HOME/Desktop/Terminal.desktop
 }
 
+function configure_ros_env () {
+    source "/opt/ros/$ROS_DISTRO/setup.bash"
+    source /opt/autoware/setup.bash
+    export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+    export CYCLONEDDS_URI=/workspace/docker_vnc/cyclonedds.xml
+}
+
 # Check if any of the variables are empty
 if [[ -z $USER_ID || -z $USER_NAME || -z $GROUP_ID || -z $GROUP_NAME ]]; then
     configure_vnc
 
-    source "/opt/ros/$ROS_DISTRO/setup.bash"
-    source /opt/autoware/setup.bash
+    configure_ros_env
     exec "$@"
 else
     echo "Starting with user: $USER_NAME >> UID $USER_ID, GID: $GROUP_ID"
@@ -73,8 +79,7 @@ else
 
     # Source ROS 2
     # hadolint ignore=SC1090
-    source "/opt/ros/$ROS_DISTRO/setup.bash"
-    source /opt/autoware/setup.bash
+    configure_ros_env
 
     # Add symlink for autoware_data if directory exists
     if [ -d /autoware_data ]; then
