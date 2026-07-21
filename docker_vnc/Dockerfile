@@ -1,5 +1,9 @@
-ARG AUTOWARE_DEVEL_IMAGE=ghcr.io/autowarefoundation/autoware:universe-devel-1.7.1
-ARG AUTOWARE_DEVEL_CUDA_IMAGE=ghcr.io/autowarefoundation/autoware:universe-devel-cuda-1.7.1
+#ARG AUTOWARE_DEVEL_IMAGE=ghcr.io/autowarefoundation/autoware:universe-devel-1.7.1
+ARG AUTOWARE_DEVEL_IMAGE=ghcr.io/cpcp-lab/autoware:universe-devel
+#ARG AUTOWARE_DEVEL_IMAGE=ghcr.io/cpcp-lab/autoware-tools:scenario-simulator
+#ARG AUTOWARE_DEVEL_CUDA_IMAGE=ghcr.io/autowarefoundation/autoware:universe-devel-cuda-1.7.1
+ARG AUTOWARE_DEVEL_CUDA_IMAGE=ghcr.io/cpcp-lab/autoware:universe-devel-cuda
+#ARG AUTOWARE_DEVEL_CUDA_IMAGE=ghcr.io/cpcp-lab/autoware-tools:scenario-simulator-cuda
 
 # hadolint ignore=DL3006
 FROM $AUTOWARE_DEVEL_IMAGE AS universe-devel-vnc

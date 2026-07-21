@@ -2,4 +2,4 @@ repositories:
   simulator/scenario_simulator:
     type: git
     url: https://github.com/cpcp-lab/scenario_simulator_v2.git
-    version: 66ca79a57b7cdd1b7e0e2498fe3dcb05e3106063
+    version: 077978c067bf7e7fecd314de53bb770159755253

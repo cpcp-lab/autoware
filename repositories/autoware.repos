@@ -38,7 +38,7 @@ repositories:
     #url: https://github.com/autowarefoundation/autoware_universe.git
     #version: 0.50.0
     url: https://github.com/cpcp-lab/autoware_universe.git
-    version: 911fde6ac32ab3650ddd47695b92761386b0c10c
+    version: a7782019c9856b1a1bba3042be9ad583364fd44e
   universe/external/tier4_autoware_msgs:
     type: git
     url: https://github.com/tier4/tier4_autoware_msgs.git
