@@ -117,11 +117,15 @@ build_images() {
         --set "*.args.AUTOWARE_BASE_IMAGE=$autoware_base_image" \
         --set "*.args.AUTOWARE_BASE_CUDA_IMAGE=$autoware_base_cuda_image" \
         --set "*.args.LIB_DIR=$lib_dir" \
-        --set "universe-devel-vnc.tags=ghcr.io/autowarefoundation/autoware:universe-devel-vnc" \
-        --set "universe-devel-cuda-vnc.tags=ghcr.io/autowarefoundation/autoware:universe-devel-cuda-vnc" \
+        --set "universe-devel-vnc.tags=ghcr.io/cpcp-lab/autoware-tools:scenario-simulator-vnc" \
+        --set "universe-devel-cuda-vnc.tags=ghcr.io/cpcp-lab/autoware-tools:scenario-simulator-cuda-vnc" \
         "$target"
     set +x
 }
+
+#        --set "universe-devel-vnc.tags=ghcr.io/cpcp-lab/autoware:universe-vnc" \
+#        --set "universe-devel-cuda-vnc.tags=ghcr.io/cpcp-lab/autoware:autoware-cuda-vnc" \
+#        --set "universe-devel-cuda-vnc.tags=ghcr.io/cpcp-lab/autoware-tools:scenario-simulator-cuda-vnc" \
 
 # Remove dangling images
 remove_dangling_images() {
