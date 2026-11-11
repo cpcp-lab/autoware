@@ -72,19 +72,21 @@ A terminal opened on the desktop has the ROS 2 and Autoware environment set up.
 
 ### Mounted directories
 
-| Host                                                    | Container                     |
-| ------------------------------------------------------- | ----------------------------- |
-| Current directory (or `--workspace DIR`)                | `/workspace`                  |
-| `autoware_data/` in the workspace (or `--data-path DIR`) | `/home/aw/autoware_data`      |
-| `--map-path DIR` (read-only)                            | `/home/aw/autoware_data/maps` |
+| Host                                                                | Container                          |
+| ------------------------------------------------------------------- | ---------------------------------- |
+| Current directory (or `--workspace DIR`)                            | `/workspace`                       |
+| `autoware_data/maps/` in the workspace (or `--map-path DIR`)        | `/home/aw/autoware_data/maps` (read-only) |
+| `autoware_data/ml_models/` in the workspace (or `--data-path DIR`)  | `/home/aw/autoware_data/ml_models` |
 
-Place maps under `autoware_data/maps/` and ML models under `autoware_data/ml_models/`,
-following the layout of the upstream Autoware images. For example:
+Each directory is mounted only when it exists (or is given). `--data-path` takes the ML models
+directory, the same directory as the `data_path` argument of the Autoware launch files.
+For example:
 
 ```bash
 ros2 launch autoware_launch planning_simulator.launch.xml \
   vehicle_model:=sample_vehicle sensor_model:=sample_sensor_kit \
-  map_path:=/home/aw/autoware_data/maps/sample-map-planning
+  map_path:=/home/aw/autoware_data/maps/sample-map-planning \
+  data_path:=/home/aw/autoware_data/ml_models
 ```
 
 ### DDS configuration

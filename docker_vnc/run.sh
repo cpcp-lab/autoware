@@ -35,7 +35,8 @@ VNC_DISPLAY=1
 VNC_PASSWORD="ubuntu"
 
 # Paths inside the container
-CONTAINER_DATA_DIR="/home/aw/autoware_data"
+CONTAINER_MAP_DIR="/home/aw/autoware_data/maps"
+CONTAINER_ML_MODELS_DIR="/home/aw/autoware_data/ml_models" # the data_path of Autoware launch files
 CONTAINER_DDS_CONFIG="/etc/cyclonedds/cyclonedds.xml"
 CONTAINER_LAUNCH_DIR="/home/aw/launch"
 CONTAINER_DEFAULT_DDS_CONFIG="/home/aw/cyclonedds.xml" # set in the upstream base image
@@ -43,8 +44,9 @@ CONTAINER_DEFAULT_DDS_CONFIG="/home/aw/cyclonedds.xml" # set in the upstream bas
 # DDS config used when it exists in the workspace (relative to the workspace)
 WORKSPACE_DDS_CONFIG="docker_vnc/cyclonedds.xml"
 
-# Data directory mounted when it exists in the workspace (relative to the workspace)
-WORKSPACE_DATA_DIR="autoware_data"
+# Data directories mounted when they exist in the workspace (relative to the workspace)
+WORKSPACE_MAP_DIR="autoware_data/maps"
+WORKSPACE_ML_MODELS_DIR="autoware_data/ml_models"
 
 # Function to print help message
 print_help() {
@@ -56,9 +58,11 @@ print_help() {
     echo -e "  ${GREEN}--display${NC}            VNC display number (default: 1, port: 5901)"
     echo -e "  ${GREEN}--password${NC}           VNC password (default: ubuntu)"
     echo -e "  ${GREEN}--workspace${NC}          Directory to mount into /workspace (default: current directory)"
-    echo -e "  ${GREEN}--map-path${NC}           Directory to mount into ${CONTAINER_DATA_DIR}/maps (read-only)"
-    echo -e "  ${GREEN}--data-path${NC}          Directory to mount into ${CONTAINER_DATA_DIR}"
-    echo -e "                       (default: ${WORKSPACE_DATA_DIR} in the workspace if it exists)"
+    echo -e "  ${GREEN}--map-path${NC}           Directory to mount into ${CONTAINER_MAP_DIR} (read-only)"
+    echo -e "                       (default: ${WORKSPACE_MAP_DIR} in the workspace if it exists)"
+    echo -e "  ${GREEN}--data-path${NC}          ML models directory to mount into ${CONTAINER_ML_MODELS_DIR},"
+    echo -e "                       the data_path of Autoware launch files"
+    echo -e "                       (default: ${WORKSPACE_ML_MODELS_DIR} in the workspace if it exists)"
     echo -e "  ${GREEN}--net-host${NC}           Use the host network (e.g. to talk to ROS nodes on the host)"
     echo -e "  ${GREEN}--domain-id${NC}          Set ROS_DOMAIN_ID"
     echo -e "  ${GREEN}--dds-config${NC}         CycloneDDS config file to use (default: ${WORKSPACE_DDS_CONFIG}"
@@ -201,11 +205,15 @@ set_variables() {
         WORKSPACE_PATH=$(pwd)
     fi
     WORKSPACE_PATH=$(abs_path "$WORKSPACE_PATH")
-    if [ -n "$MAP_PATH" ]; then MAP_PATH=$(abs_path "$MAP_PATH"); fi
+    if [ -n "$MAP_PATH" ]; then
+        MAP_PATH=$(abs_path "$MAP_PATH")
+    elif [ -d "${WORKSPACE_PATH}/${WORKSPACE_MAP_DIR}" ]; then
+        MAP_PATH="${WORKSPACE_PATH}/${WORKSPACE_MAP_DIR}"
+    fi
     if [ -n "$DATA_PATH" ]; then
         DATA_PATH=$(abs_path "$DATA_PATH")
-    elif [ -d "${WORKSPACE_PATH}/${WORKSPACE_DATA_DIR}" ]; then
-        DATA_PATH="${WORKSPACE_PATH}/${WORKSPACE_DATA_DIR}"
+    elif [ -d "${WORKSPACE_PATH}/${WORKSPACE_ML_MODELS_DIR}" ]; then
+        DATA_PATH="${WORKSPACE_PATH}/${WORKSPACE_ML_MODELS_DIR}"
     fi
     if [ -n "$LAUNCH_FILE" ]; then LAUNCH_FILE=$(abs_path "$LAUNCH_FILE"); fi
 
@@ -260,11 +268,11 @@ set_docker_args() {
         DOCKER_ARGS+=(-e VNC_DISPLAY="$VNC_DISPLAY" -e VNC_GEOMETRY="$VNC_GEOMETRY" -e VNC_PASSWORD="$VNC_PASSWORD")
     fi
 
-    if [ -n "$DATA_PATH" ]; then
-        DOCKER_ARGS+=(-v "${DATA_PATH}:${CONTAINER_DATA_DIR}")
-    fi
     if [ -n "$MAP_PATH" ]; then
-        DOCKER_ARGS+=(-v "${MAP_PATH}:${CONTAINER_DATA_DIR}/maps:ro")
+        DOCKER_ARGS+=(-v "${MAP_PATH}:${CONTAINER_MAP_DIR}:ro")
+    fi
+    if [ -n "$DATA_PATH" ]; then
+        DOCKER_ARGS+=(-v "${DATA_PATH}:${CONTAINER_ML_MODELS_DIR}")
     fi
     if [ -n "$DDS_CONFIG" ]; then
         DOCKER_ARGS+=(-v "${DDS_CONFIG}:${CONTAINER_DDS_CONFIG}:ro")
@@ -312,11 +320,11 @@ print_info() {
     fi
     echo -e "${GREEN}IMAGE:${NC} ${IMAGE}"
     echo -e "${GREEN}WORKSPACE PATH(mounted):${NC} ${WORKSPACE_PATH}:/workspace"
-    if [ -n "$DATA_PATH" ]; then
-        echo -e "${GREEN}DATA PATH(mounted):${NC} ${DATA_PATH}:${CONTAINER_DATA_DIR}"
-    fi
     if [ -n "$MAP_PATH" ]; then
-        echo -e "${GREEN}MAP PATH(mounted):${NC} ${MAP_PATH}:${CONTAINER_DATA_DIR}/maps"
+        echo -e "${GREEN}MAP PATH(mounted):${NC} ${MAP_PATH}:${CONTAINER_MAP_DIR}"
+    fi
+    if [ -n "$DATA_PATH" ]; then
+        echo -e "${GREEN}DATA PATH(mounted):${NC} ${DATA_PATH}:${CONTAINER_ML_MODELS_DIR}"
     fi
     if [ -n "$DDS_CONFIG" ]; then
         echo -e "${GREEN}DDS CONFIG:${NC} ${DDS_CONFIG}"
