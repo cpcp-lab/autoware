@@ -1,5 +1,9 @@
 # Autoware - the world's leading open-source software project for autonomous driving
 
+This branch adds [Docker images extended with a VNC environment](docker_vnc/README.md).
+
+---
+
 <p align="center">
     <img src="https://user-images.githubusercontent.com/63835446/158918717-58d6deaf-93fb-47f9-891d-e242b02cba7b.png"
         alt="Autoware_RViz" width="75%" />

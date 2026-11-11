@@ -1,0 +1,13 @@
+# Dummy diagnostics for running Autoware without the controller node
+# (trajectory_follower_mode:=none), e.g. when the control command comes from Simulink.
+#
+# The diagnostic graph (autoware_launch/config/system/diagnostics/control.yaml) requires
+#   /autoware/control/performance_monitoring/control_state
+#     node: controller_node_exe, name: control_state
+# which is normally published by the controller. Without it the unit stays STALE and
+# the autonomous operation mode is never available.
+/**:
+  ros__parameters:
+    required_diags:
+      ## /autoware/control/performance_monitoring/control_state
+      "controller_node_exe: control_state": default

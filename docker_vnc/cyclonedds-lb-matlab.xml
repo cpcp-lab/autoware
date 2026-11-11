@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CycloneDDS xmlns="https://cdds.io/config">
+  <Domain Id="any">
+    <General>
+      <Transport>udp</Transport>
+      <Interfaces>
+        <!--<NetworkInterface address="127.0.0.1"/>-->
+        <NetworkInterface autodetermine="true"/>
+      </Interfaces>
+      <ExternalNetworkAddress>192.168.65.254</ExternalNetworkAddress>
+      <AllowMulticast>false</AllowMulticast>
+      <DontRoute>false</DontRoute>
+    </General>
+
+    <Discovery>
+      <!--<ParticipantIndex>119</ParticipantIndex>
+      <MaxAutoParticipantIndex>100</MaxAutoParticipantIndex>
+      -->
+      <!--<ParticipantIndex>0</ParticipantIndex>-->
+      <ParticipantIndex>auto</ParticipantIndex>
+      <MaxAutoParticipantIndex>9</MaxAutoParticipantIndex>
+    
+      <Ports>
+        <Base>7620</Base>
+      </Ports>
+    
+      <Peers>
+        <!--<Peer Address="127.0.0.1:13660"/>-->
+        <Peer Address="127.0.0.1"/>
+      </Peers>
+    </Discovery>
+
+    <!--<Tracing>
+      <Verbosity>config</Verbosity>
+      <Category>discovery</Category>
+      <OutputFile>/tmp/matlab-cyclone-${CYCLONEDDS_PID}.log</OutputFile>
+    </Tracing>
+    -->
+
+  </Domain>
+</CycloneDDS>

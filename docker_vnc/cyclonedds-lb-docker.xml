@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CycloneDDS xmlns="https://cdds.io/config">
+  <Domain Id="any">
+    <General>
+      <Transport>udp</Transport>
+
+      <!-- Select a normal interface for sending -->
+      <Interfaces>
+        <NetworkInterface autodetermine="true"/>
+      </Interfaces>
+
+      <!-- Notify the destination via Docker Desktop to MATLAB -->
+      <ExternalNetworkAddress>127.0.0.1</ExternalNetworkAddress>
+
+      <AllowMulticast>false</AllowMulticast>
+      <DontRoute>false</DontRoute>
+    </General>
+
+    <Discovery>
+      <!--<ParticipantIndex>0</ParticipantIndex>-->
+      <ParticipantIndex>auto</ParticipantIndex>
+      <MaxAutoParticipantIndex>100</MaxAutoParticipantIndex>
+      <Peers>
+        <!-- For searching other nodes in the container -->
+        <Peer Address="192.168.65.3"/>
+
+        <!-- For host MATLAB nodes -->
+        <Peer Address="192.168.65.254:13880"/>
+        <Peer Address="192.168.65.254:13882"/>
+        <Peer Address="192.168.65.254:13884"/>
+        <Peer Address="192.168.65.254:13886"/>
+        <Peer Address="192.168.65.254:13888"/>
+        <Peer Address="192.168.65.254:13890"/>
+        <Peer Address="192.168.65.254:13892"/>
+        <Peer Address="192.168.65.254:13894"/>
+        <Peer Address="192.168.65.254:13896"/>
+        <Peer Address="192.168.65.254:13898"/>
+      </Peers>
+    </Discovery>
+
+    <!--<Tracing>
+      <Verbosity>warning</Verbosity>
+      <OutputFile>docker-cyclonedds-${CYCLONEDDS_PID}.log</OutputFile>
+    </Tracing>
+    -->
+  </Domain>
+</CycloneDDS>
