@@ -35,6 +35,12 @@ EOF
 </channel>
 EOF
 
+    mkdir -p $HOME/.config/xfce4/terminal
+    cat << EOF > $HOME/.config/xfce4/terminal/terminalrc
+[Configuration]
+ScrollingLines=10000
+EOF
+
     mkdir -p $HOME/Desktop
     cat << EOF > $HOME/Desktop/Terminal.desktop
 #!/usr/bin/env xdg-open
