@@ -60,7 +60,7 @@ function configure_ros_env () {
     source "/opt/ros/$ROS_DISTRO/setup.bash"
     source /opt/autoware/setup.bash
     export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-    export CYCLONEDDS_URI=/workspace/docker_vnc/cyclonedds.xml
+    export CYCLONEDDS_URI=/cyclonedds.xml
 }
 
 # Check if any of the variables are empty
@@ -68,6 +68,7 @@ if [[ -z $USER_ID || -z $USER_NAME || -z $GROUP_ID || -z $GROUP_NAME ]]; then
     configure_vnc
 
     configure_ros_env
+
     exec "$@"
 else
     echo "Starting with user: $USER_NAME >> UID $USER_ID, GID: $GROUP_ID"

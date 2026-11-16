@@ -1,6 +1,6 @@
 group "default" {
   targets = [
-    "visualizer",
+    #"visualizer",
     "scenario-simulator",
   ]
 }

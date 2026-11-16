@@ -14,6 +14,7 @@ option_no_nvidia=false
 option_x11=false
 option_pull_latest_image=false
 option_image=""
+LAUNCH_CMD=""
 MAP_PATH=""
 DATA_PATH=""
 WORKSPACE_PATH=""
@@ -26,8 +27,8 @@ print_help() {
     echo -e "Options:"
     echo -e "  ${GREEN}--help/-h${NC}            Display this help message"
     echo -e "  ${GREEN}--x11${NC}                Use X11 mode (default: VNC mode)"
-    echo -e "  ${GREEN}--geometry${NC}           VNC desktop resolution WxH (default: 1920x1200)
-  ${GREEN}--display${NC}            VNC display number (default: 1, port: 5901)"
+    echo -e "  ${GREEN}--geometry${NC}           VNC desktop resolution WxH (default: 1920x1200)"
+    echo -e "  ${GREEN}--display${NC}            VNC display number (default: 1, port: 5901)"
     echo -e "  ${GREEN}--workspace${NC}          Directory to mount into /workspace (default: current directory)"
     echo -e "  ${GREEN}--map-path${NC}           Mount map files into /autoware_map"
     echo -e "  ${GREEN}--data-path${NC}          Mount data files into /autoware_data"
@@ -82,6 +83,15 @@ parse_arguments() {
             print_help
             exit 1
             ;;
+        -*)
+            echo "Unknown option: $1"
+            print_help
+            exit 1
+            ;;
+		*)
+			LAUNCH_CMD="$@"
+			break
+			;;
         esac
         shift
     done
@@ -98,12 +108,17 @@ set_variables() {
     if [ "$DATA_PATH" != "" ]; then
         DATA="-v ${DATA_PATH}:/autoware_data:rw"
     fi
-
+    
     if [ "$WORKSPACE_PATH" = "" ]; then
         WORKSPACE_PATH=$(pwd)
     fi
     WORKSPACE="-v ${WORKSPACE_PATH}:/workspace"
     VNC_PORT=$((5900 + VNC_DISPLAY))
+
+    # Set launch command
+    if [ "$LAUNCH_CMD" = "" ]; then
+        LAUNCH_CMD="/bin/bash"
+    fi
 }
 
 # Set GPU flag and image name
@@ -160,9 +175,11 @@ main() {
             -e XAUTHORITY="${XAUTHORITY}" -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
             -e NVIDIA_DRIVER_CAPABILITIES=all -e TZ="$(cat /etc/timezone 2>/dev/null || echo "UTC")" \
             ${WORKSPACE} ${MAP} ${DATA} "${IMAGE}" \
-            /bin/bash
+            ${LAUNCH_CMD}
     else
-        docker run -it --rm -p "${VNC_PORT}:${VNC_PORT}" ${GPU_FLAG} ${USER_ID} \
+        docker run \
+			--cap-add=NET_ADMIN --network=host \
+			-it --rm -p "${VNC_PORT}:${VNC_PORT}" ${GPU_FLAG} ${USER_ID} \
             -e NVIDIA_DRIVER_CAPABILITIES=all -e TZ="$(cat /etc/timezone 2>/dev/null || echo "UTC")" \
             ${WORKSPACE} ${MAP} ${DATA} "${IMAGE}" \
             /bin/bash -c "vncserver :${VNC_DISPLAY} -geometry ${VNC_GEOMETRY} -depth 24 -localhost no; exec /bin/bash"
